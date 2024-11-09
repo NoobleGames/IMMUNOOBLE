@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOOBLE | Movies</title>
+    <link rel="icon" href="https://github.com/NoobleGames/NoobleGames.github.io/blob/main/Logo/Logo4.png?raw=true" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle, #1c1c1e, #0d0d0d);
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            font-size: 4em;
+            color: #ff6f61;
+            text-shadow: 0 4px 15px rgba(255, 111, 97, 0.8);
+            margin-bottom: 15px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h3 {
+            font-size: 2em;
+            color: #ddd;
+            margin-bottom: 30px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .warning {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffbb33;
+            color: #000;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px auto 30px;
+            width: 85%;
+            max-width: 800px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .warning i {
+            margin-right: 10px;
+            animation: rotateIn 0.8s;
+        }
+
+        #search-bar {
+            width: 90%;
+            max-width: 500px;
+            padding: 15px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            border: none;
+            background-color: #333;
+            color: #ffffff;
+            margin: 20px auto 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        #search-bar:focus {
+            transform: scale(1.05);
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 111, 97, 0.7);
+        }
+
+        #movie-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        .movie-item {
+            background: #292929;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        .movie-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+        }
+
+        .movie-item img {
+            width: 100%;
+            height: 360px;
+            object-fit: cover;
+            transition: opacity 0.3s;
+        }
+
+        .movie-info {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            transition: background 0.3s;
+        }
+
+        .movie-item:hover .movie-info {
+            background: rgba(50, 50, 50, 0.85);
+        }
+
+        .movie-item h4 {
+            font-size: 1.5em;
+            color: #ff6f61;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .movie-item .rating,
+        .movie-item .release-date {
+            position: absolute;
+            top: 15px;
+            padding: 5px 8px;
+            font-size: 0.85em;
+            border-radius: 5px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.7);
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .movie-item .rating {
+            left: 15px;
+        }
+
+        .movie-item .release-date {
+            right: 15px;
+        }
+
+        .movie-item a {
+            display: inline-block;
+            padding: 10px 25px;
+            margin-top: 15px;
+            background-color: #ff6f61;
+            border-radius: 30px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .movie-item a:hover {
+            background-color: #ff4c4c;
+        }
+
+        .attribution {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .attribution img {
+            height: 20px;
+            margin-left: 5px;
+        }
+
+        #movie-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #movie-modal iframe {
+            width: 80%;
+            height: 80%;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        #movie-modal .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5em;
+            color: white;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        #movie-modal .close:hover {
+            color: #ff4c4c;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes rotateIn {
+            from { transform: rotate(-15deg); }
+            to { transform: rotate(0); }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3em;
+            }
+
+            h3 {
+                font-size: 1.8em;
+            }
+
+            #search-bar {
+                width: 100%;
+            }
+
+            .movie-item {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Movies/TV</h1>
+    <h3>Popular Movies/TV Shows</h3>
+
+    <div class="warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Warning:</strong> Some movies and TV shows may not work due to provider restrictions.
+    </div>
+
+    <input type="text" id="search-bar" placeholder="Search Movies or TV Shows..." oninput="searchMovies()">
+    
+    <div id="movie-container"></div>
+    
+    <div class="attribution">
+        <span>Images and data provided by</span>
+        <a href="https://www.themoviedb.org/">
+            <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg" alt="TMDB Logo" />
+        </a>
+    </div>
+    
+    <div id="movie-modal">
+        <span class="close" onclick="closeMovieModal()">&times;</span>
+        <iframe id="movie-frame" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+    
+    <script>
+        const apiKey = '9ecfd7e66acabc26453faf47ed14b140';
+        const movieContainer = document.getElementById('movie-container');
+        const searchBar = document.getElementById('search-bar');
+
+        function fetchMovies(query = '') {
+            const url = query ?
+                https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&query=${query}&language=en-US :
+                https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=en-US;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    movieContainer.innerHTML = '';
+                    data.results.forEach(item => {
+                        const isMovie = item.media_type === 'movie';
+                        const isTV = item.media_type === 'tv';
+
+                        if (isMovie || isTV) {
+                            const releaseYear = (item.release_date || item.first_air_date || '').slice(0, 4);
+                            const movieElement = document.createElement('div');
+                            movieElement.classList.add('movie-item');
+                            movieElement.innerHTML = 
+                                <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${item.title || item.name}">
+                                <div class="rating"><i class="fas fa-star"></i> ${item.vote_average.toFixed(1)}/10</div>
+                                <div class="release-date">${releaseYear}</div>
+                                <div class="movie-info">
+                                    <h4>${item.title || item.name}</h4>
+                                    <a href="#" onclick="openMovie('${item.id}', '${isMovie ? 'movie' : 'tv'}', '${item.name}')">Watch Now</a>
+                                </div>
+                            ;
+                            movieContainer.appendChild(movieElement);
+                        }
+                    });
+                });
+        }
+
+        function openMovie(id, type, title) {
+            if (type === 'tv') {
+                const season = prompt(Enter season number for "${title}":);
+                const episode = prompt(Enter episode number for season ${season}:);
+                const url = https://moviesapi.club/tv/${id}-${season}-${episode};
+                document.getElementById('movie-frame').src = url;
+            } else {
+                const url = https://moviesapi.club/movie/${id};
+                document.getElementById('movie-frame').src = url;
+            }
+            document.getElementById('movie-modal').style.display = 'flex';
+        }
+
+        function closeMovieModal() {
+            document.getElementById('movie-modal').style.display = 'none';
+            document.getElementById('movie-frame').src = '';
+        }
+
+        function searchMovies() {
+            const query = searchBar.value.trim();
+            fetchMovies(query);
+        }
+
+        fetchMovies();
+    </script>
+</body>
+
+</html>
